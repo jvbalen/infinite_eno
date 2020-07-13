@@ -5,6 +5,8 @@ import os
 import tweepy
 from time import time, gmtime, strftime
 
+from draw import draw_card
+
 
 # ====== Individual bot configuration ==========================
 
@@ -68,11 +70,20 @@ def get_tweet(tweet_schedule, recent_tweets):
 def tweet(api, text):
     """Send out the text as a tweet."""
     try:
-        api.update_status(text)
+        draw_card(text, out_path='card.jpg')
+        media = api.media_upload('card.jpg')
+        api.create_media_metadata(media.media_id, alt_text=text)
+        api.update_status(None, media_ids=[media.media_id])
     except tweepy.error.TweepError as e:
         log(e.message)
+        try:
+            api.update_status(text)
+        except tweepy.error.TweepError as e:
+            log(e.message)
+        else:
+            log("Tweeted: " + text)
     else:
-        log("Tweeted: " + text)
+        log("Tweeted card with text: " + text)
 
 
 def log(message):
