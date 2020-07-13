@@ -38,7 +38,7 @@ def get_tweet_schedule():
         tweets = f.readlines()
     tweets = [s.strip('\n') for s in tweets]
 
-    times = range(T_START, T_START + 3600 * INTERVAL_HRS * len(tweets), 3600 * INTERVAL)
+    times = range(T_START, T_START + 3600 * INTERVAL_HRS * len(tweets), 3600 * INTERVAL_HRS)
     times = [strftime("%Y%m%d%H", gmtime(t)) for t in times]
     tweet_schedule = dict(zip(times, tweets))
 
