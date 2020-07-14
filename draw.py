@@ -30,7 +30,7 @@ def rand_crop(x, dims=(9, 7), scale=1.0, resolution=54):
 
 def draw_card(text, out_path=None, dims=(9, 7), std_xy=1.0, text_size=20, bg_path=BG_PATH, max_angle=10, dy=0.45):
 
-    np.random.seed(1988)
+    # np.random.seed(1988)
     w, h = dims
     facecolor=[1, 1, .98]
     x0 = std_xy * np.random.randn()
