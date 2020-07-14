@@ -67,10 +67,10 @@ def draw_card(text, out_path=None, dims=(9, 7), std_xy=1.0, text_size=20, bg_pat
             ha = 'left'
         print(f'text: x={x:.3f}, y={y:.3f}')
         if os.path.exists(FONT_PATH):
-            ax.text(x, y, line, size=text_size, color=[.2, .2, .3], fontproperties=fm.FontProperties(fname=FONT_PATH),
+            ax.text(x, y, line, color=[.2, .2, .3], fontproperties=fm.FontProperties(fname=FONT_PATH, size=text_size),
                     ha=ha, rotation=rand_angle, rotation_mode='anchor', transform=transform)
         else:
-            ax.text(x, y, line, size=text_size, color=[.2, .2, .3], name='helvetica',
+            ax.text(x, y, line, color=[.2, .2, .3], name='helvetica', size=text_size, 
                     ha=ha, rotation=rand_angle, rotation_mode='anchor', transform=transform)
 
     ax.axis('off');
