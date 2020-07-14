@@ -1,13 +1,16 @@
 
-import textwrap
+import os
 
-from PIL import Image
+import textwrap
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
 import matplotlib.patches as patches
+from PIL import Image
 
-BG_FILE = 'background.jpg'
+BG_PATH = 'background.jpg'
+FONT_PATH = '/usr/share/fonts/type1/gsfonts/n019003l.pfb'
 
 
 def rand_crop(x, dims=(9, 7), scale=1.0, resolution=54):
@@ -19,15 +22,17 @@ def rand_crop(x, dims=(9, 7), scale=1.0, resolution=54):
         w_new, h_new = w, h
     left = int((w - w_new) * np.random.rand())
     top = int((h - h_new) * np.random.rand())
+    print(f'image: w={w}, h={h}')
+    print(f'crop: left={left}, top={top}, w_new={w_new}, h_new={h_new}')
     
     return x[top:top + h_new, left:left + w_new, :]
 
 
-def draw_card(text, out_path=None, dims=(9, 7), std_xy=1.0, text_size=20, bg_path=BG_FILE, max_angle=10, dy=0.45):
+def draw_card(text, out_path=None, dims=(9, 7), std_xy=1.0, text_size=20, bg_path=BG_PATH, max_angle=10, dy=0.45):
 
+    np.random.seed(1988)
     w, h = dims
     facecolor=[1, 1, .98]
-
     x0 = std_xy * np.random.randn()
     y0 = std_xy * np.random.randn()
     scale = np.random.rand() + 1
@@ -41,12 +46,10 @@ def draw_card(text, out_path=None, dims=(9, 7), std_xy=1.0, text_size=20, bg_pat
         im = rand_crop(im, dims=dims, scale=scale)
         ax.imshow(im, extent=xlim + ylim, origin='upper')
     
-    ax.axis('off');
-    ax.set_xlim(xlim)
-    ax.set_ylim(ylim)
     lines = textwrap.fill(text, 42).split('\n')
     n_lines = sum(len(l) for l in lines) / max(len(l) for l in lines)
     rand_angle = max_angle * (2 * np.random.rand() - 1)
+    print(f'box: x={x0:.3f}, y={y0:.3f}')
     rect = patches.FancyBboxPatch((x0 - w/2,y0 - h/2), w/1, h/1, linewidth=0, facecolor=facecolor,
                                   boxstyle="round,pad=0.0,rounding_size=0.5")
     transform = mpl.transforms.Affine2D().rotate_deg(rand_angle) + ax.transData
@@ -55,14 +58,23 @@ def draw_card(text, out_path=None, dims=(9, 7), std_xy=1.0, text_size=20, bg_pat
     y0 = y0 + dy * (n_lines - 1) / 2
     for i, line in enumerate(lines):
         y = y0 - dy * i
-        if len(lines) > 1:
-            # left-align multi-line prompts
-            ax.text(x0 - w/2.8, y, line, size=text_size, color=[.2, .2, .3], name='helvetica',
-                    ha='left', rotation=rand_angle, rotation_mode='anchor', transform=transform)
+        if len(lines) == 1:
+            x = x0
+            ha = 'center'
         else:
-            # center single-line prompts
-            ax.text(x0, y, line, size=text_size, color=[.2, .2, .3], # name='helvetica',
-                    ha='center', rotation=rand_angle, rotation_mode='anchor', transform=transform)
+            # left-align multi-line prompts
+            x = x0 - w / 2.8
+            ha = 'left'
+        print(f'text: x={x:.3f}, y={y:.3f}')
+        if os.path.exists(FONT_PATH):
+            ax.text(x, y, line, size=text_size, color=[.2, .2, .3], fontproperties=fm.FontProperties(fname=FONT_PATH),
+                    ha=ha, rotation=rand_angle, rotation_mode='anchor', transform=transform)
+        else:
+            ax.text(x, y, line, size=text_size, color=[.2, .2, .3], name='helvetica',
+                    ha=ha, rotation=rand_angle, rotation_mode='anchor', transform=transform)
 
+    ax.axis('off');
+    ax.set_xlim(xlim)
+    ax.set_ylim(ylim)
     if out_path:
         fig.savefig(out_path, pad_inches=0.0, bbox_inches='tight')
