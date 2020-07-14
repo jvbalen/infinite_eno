@@ -47,21 +47,32 @@ def get_tweet_schedule():
     return tweet_schedule
 
 
-def normalize_tweet(s):
+def normalize_text(s):
 
     return ''.join(filter(str.isalpha, s[:50].lower()))
 
 
+def get_tweet_text(api, tweet):
+
+    status = api.get_status(tweet.id, include_ext_alt_text=True)
+    try:
+        text = status.extended_entities['media'][0]['ext_alt_text']
+    except AttributeError:
+        text = tweet.text
+
+    return text
+
+
 def get_recent_tweets(api):
 
-    return [normalize_tweet(tweet.text) for tweet in api.user_timeline('infinite_eno')]
+    return [normalize_text(get_tweet_text(api, tweet)) for tweet in api.user_timeline('infinite_eno')]
 
 
 def get_tweet(tweet_schedule, recent_tweets):
     """Create the text of the tweet you want to send."""
     t = strftime("%Y%m%d%H", gmtime(time()))
     tweet = tweet_schedule[t]
-    if normalize_tweet(tweet) not in recent_tweets:
+    if normalize_text(tweet) not in recent_tweets:
         return tweet
     else:
         raise ValueError(f'ERROR: tweet found, but was already tweeted recently. Tweet: "{tweet}"')
@@ -70,6 +81,9 @@ def get_tweet(tweet_schedule, recent_tweets):
 def tweet(api, text):
     """Send out the text as a tweet."""
     try:
+        # text = "Make an exhaustive list of everything you might do and do the last thing on the list"
+        # text = "Make a sudden, destructive unpredictable action; incorporate"
+        # text = "Remove specifics and convert to ambiguities"
         draw_card(text, out_path='card.jpg')
         media = api.media_upload('card.jpg')
         api.create_media_metadata(media.media_id, alt_text=text)
