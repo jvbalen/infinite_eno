@@ -64,9 +64,9 @@ def draw_card(text, out_path=None, dims=(9, 7), std_xy=1.0, text_size=20, bg_pat
     ax.add_patch(rect);
 
     # draw text
-    y0 = y0 + dy * (n_lines - 1) / 2
     lines = textwrap.fill(text, 42).split('\n')
     n_lines = sum(len(l) for l in lines) / max(len(l) for l in lines)
+    y0 = y0 + dy * (n_lines - 1) / 2
     for i, line in enumerate(lines):
         y = y0 - dy * i
         if len(lines) == 1:

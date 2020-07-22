@@ -16,7 +16,7 @@ logfile_name = bot_username + ".log"
 # ====== Schedule ==============================================
 
 FILENAME = '20200722.txt'  # was: 20200713.txt
-T_START = 1595433164 # was: 1594594800
+T_START = 1595425964  # was: 1594594800
 INTERVAL_HRS = 3  # was: 1, must be int
 
 
