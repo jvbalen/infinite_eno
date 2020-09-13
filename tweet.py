@@ -15,9 +15,9 @@ logfile_name = bot_username + ".log"
 
 # ====== Schedule ==============================================
 
-FILENAME = '20200722.txt'  # was: 20200713.txt
-T_START = 1595425964  # was: 1594594800
-INTERVAL_HRS = 3  # was: 1, must be int
+FILENAME = '20200913.txt'  # was: 20200713.txt
+T_START = 1600000000  # was: 1595425964
+INTERVAL_HRS = 24  # was: 1, must be int
 
 
 def authenticate():
@@ -43,6 +43,7 @@ def get_tweet_schedule():
     times = range(T_START, T_START + 3600 * INTERVAL_HRS * len(tweets), 3600 * INTERVAL_HRS)
     times = [strftime("%Y%m%d%H", gmtime(t)) for t in times]
     tweet_schedule = dict(zip(times, tweets))
+    print(list(zip(times, tweets))[:30])
 
     return tweet_schedule
 
