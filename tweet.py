@@ -17,7 +17,7 @@ logfile_name = bot_username + ".log"
 
 FILENAME = '20200913.txt'  # was: 20200713.txt
 T_START = 1600021600  # was: 1595425964
-INTERVAL_HRS = 24  # was: 1, must be int
+INTERVAL_HRS = 16  # was: 1, must be int
 
 
 def authenticate():
